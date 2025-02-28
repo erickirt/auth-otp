@@ -14,43 +14,33 @@ import { OtpOptions } from "../types"
 const verifyOtpWorkflow = createWorkflow(
   "verify-otp",
   function (input: { identifier: string, otp: string, actorType: string, accessorsPerActor: Required<OtpOptions>['accessorsPerActor'][string] }) {
-    const actorResult = getActorStep({
+    const { actor } = getActorStep({
       identifier: input.identifier,
       actorType: input.actorType,
       accessorsPerActor: input.accessorsPerActor
     })
 
-    const authIdentityResult = when(actorResult, ({ actor }) => isDefined(actor) && isDefined(actor.data) && actor.data.length > 0).then(() => getAuthIdentityStep({
+    const { authIdentity } = getAuthIdentityStep({
       identifier: input.identifier,
       actorType: input.actorType,
       accessorsPerActor: input.accessorsPerActor,
-      foundActor: actorResult.actor.data[0]
-    }))
-
-    const storedOtpResult = when({ authIdentityResult }, (result) =>
-      isDefined(result.authIdentityResult)
-      && isDefined(result.authIdentityResult.authIdentity)
-      && isDefined(result.authIdentityResult.authIdentity.id)
-    ).then(() => {
-      return getStoredOtpStep({
-        authIdentityId: authIdentityResult!.authIdentity.id,
-        identifier: input.identifier
-      })
+      foundActor: actor.data[0]
     })
 
-    const validateOtpResult = when({ storedOtp: storedOtpResult?.storedOtp }, (result) =>
-      isDefined(result.storedOtp)
-    ).then(() => {
-      return validateOtpStep({
+    const storedOtpResult = getStoredOtpStep({
+      authIdentityId: authIdentity!.id,
+      identifier: input.identifier
+    })
+
+    const validateOtpResult = validateOtpStep({
         storedOtp: storedOtpResult?.storedOtp,
-        otp: input.otp
-      })
+      otp: input.otp
     })
 
     // If we reach this point, validation was successful
     return new WorkflowResponse({
       isValid: validateOtpResult?.isValid,
-      authIdentity: authIdentityResult?.authIdentity
+      authIdentity: authIdentity
     })
   }
 )

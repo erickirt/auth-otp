@@ -9,27 +9,23 @@ import { isDefined } from "@medusajs/framework/utils"
 const generateOtpWorkflow = createWorkflow(
   "generate-otp",
   function (input: { identifier: string, actorType: string, accessorsPerActor: Required<OtpOptions>['accessorsPerActor'][string] }) {
-    const actorResult = getActorStep({
+    const { actor } = getActorStep({
       identifier: input.identifier,
       actorType: input.actorType,
       accessorsPerActor: input.accessorsPerActor
     })
 
-    const authIdentityResult = when(actorResult, ({ actor }) => isDefined(actor) && isDefined(actor.data) && actor.data.length > 0).then(() => getAuthIdentityStep({
+    const { authIdentity } = getAuthIdentityStep({
       identifier: input.identifier,
       actorType: input.actorType,
       accessorsPerActor: input.accessorsPerActor,
-      foundActor: actorResult.actor.data[0]
-    }))
+      foundActor: actor.data[0]
+    })
 
-    const generatedOtpResult = when({ authIdentityResult }, (result) =>
-      isDefined(result.authIdentityResult)
-        && isDefined(result.authIdentityResult.authIdentity)
-        && isDefined(result.authIdentityResult.authIdentity.id)
-    ).then(() => generateOtpStep({
-      authIdentityId: authIdentityResult!.authIdentity.id,
+    const generatedOtpResult = generateOtpStep({
+      authIdentityId: authIdentity!.id,
       identifier: input.identifier
-    }))
+    })
 
     emitEventStep({
       eventName: Events.OTP_GENERATED,
