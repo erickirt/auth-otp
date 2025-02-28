@@ -37,5 +37,5 @@ export const POST = async (
     throw error
   })
 
-  res.send('If an account exists with this identifier, an OTP will be sent.')
+  res.send({ message: 'If an account exists with this identifier, an OTP will be sent.' })
 }
