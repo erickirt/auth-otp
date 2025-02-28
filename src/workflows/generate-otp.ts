@@ -1,10 +1,9 @@
-import { createWorkflow, when, WorkflowResponse } from "@medusajs/framework/workflows-sdk"
+import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep } from "@medusajs/medusa/core-flows"
 import { Events, OtpOptions } from "../types"
 import { getAuthIdentityStep } from "./steps/get-auth-identity-step"
 import { generateOtpStep } from "./steps/generate-otp-step"
 import { getActorStep } from "./steps/get-actor-step"
-import { isDefined } from "@medusajs/framework/utils"
 
 const generateOtpWorkflow = createWorkflow(
   "generate-otp",
