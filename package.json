@@ -1,9 +1,9 @@
 {
   "name": "@perseidesjs/auth-otp",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1",
   "description": "An OTP Auth Provider for Medusa 2.x",
   "author": "adevinwild (https://perseides.org)",
-  "license": "MIT",
+  "types": "./.medusa/server/src/types/index.d.ts",
   "files": [
     ".medusa/server"
   ],
@@ -11,6 +11,10 @@
     "./package.json": "./package.json",
     "./workflows": "./.medusa/server/src/workflows/index.js",
     "./providers/*": "./.medusa/server/src/providers/*/index.js",
+    "./types": {
+      "types": "./.medusa/server/src/types/index.d.ts",
+      "default": "./.medusa/server/src/types/index.js"
+    },
     "./*": "./.medusa/server/src/*.js"
   },
   "keywords": [
@@ -22,9 +26,10 @@
     "medusa-v2"
   ],
   "scripts": {
-    "build": "medusa plugin:build",
+    "generate-types": "tsc -p tsconfig.index.json",
+    "build": "medusa plugin:build && npm run generate-types",
     "dev": "medusa plugin:develop",
-    "prepublishOnly": "medusa plugin:build",
+    "prepublishOnly": "npm run build",
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
     "test:integration:providers": "TEST_TYPE=integration:providers NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit"

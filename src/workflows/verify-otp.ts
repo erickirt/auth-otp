@@ -5,6 +5,15 @@ import { validateOtpStep } from "./steps/validate-otp-step"
 import { getActorStep } from "./steps/get-actor-step"
 import { OtpOptions } from "../types"
 
+/**
+ * Verifies an OTP for a given identifier and actor type.
+ *
+ * @param input - The input for the workflow.
+ * @param input.identifier - The identifier of the actor to verify the OTP for.
+ * @param input.otp - The OTP to verify.
+ * @param input.actorType - The type of actor to verify the OTP for.
+ * @param input.accessorsPerActor - The accessors per actor to use for the workflow.
+ */
 const verifyOtpWorkflow = createWorkflow(
   "verify-otp",
   function (input: { identifier: string, otp: string, actorType: string, accessorsPerActor: Required<OtpOptions>['accessorsPerActor'][string] }) {

@@ -4,6 +4,13 @@ import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import getPluginOptions from "../../utils/get-plugin-options"
 import { OtpUtils } from "../../utils/otp"
 
+/**
+ * Generates an OTP for a given auth identity ID and identifier.
+ *
+ * @param input - The input for the step.
+ * @param input.authIdentityId - The ID of the auth identity to generate the OTP for.
+ * @param input.identifier - The identifier of the actor to generate the OTP for.
+ */
 export const generateOtpStep = createStep(
   "generate-otp",
   async (input: {

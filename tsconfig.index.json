@@ -8,9 +8,9 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "declaration": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
     "sourceMap": false,
-    "inlineSourceMap": true,
     "outDir": "./.medusa/server",
     "rootDir": "./",
     "jsx": "react-jsx",
@@ -19,12 +19,10 @@
     "checkJs": false,
     "strictNullChecks": true
   },
-  "ts-node": {
-    "swc": true
-  },
-  "include": [
-    "**/*",
-    ".medusa/types/*"
+  "files": [
+    "src/types/index.ts",
+    "src/providers/otp/index.ts",
+    "src/workflows/index.ts"
   ],
   "exclude": [
     "node_modules",

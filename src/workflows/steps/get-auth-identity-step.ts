@@ -1,7 +1,16 @@
-import { ContainerRegistrationKeys, isDefined, Modules } from "@medusajs/framework/utils"
+import { isDefined, Modules } from "@medusajs/framework/utils"
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { OtpOptions } from "../../types"
 
+/**
+ * Gets an auth identity for a given identifier and actor type.
+ *
+ * @param input - The input for the step.
+ * @param input.identifier - The identifier of the actor to get the auth identity for.
+ * @param input.actorType - The type of actor to get the auth identity for.
+ * @param input.foundActor - The found actor to get the auth identity for.
+ * @param input.accessorsPerActor - The accessors per actor to use for the step.
+ */
 export const getAuthIdentityStep = createStep(
   "get-auth-identity",
   async (input: {

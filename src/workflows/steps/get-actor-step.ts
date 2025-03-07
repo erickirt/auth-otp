@@ -2,6 +2,14 @@ import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/util
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import { OtpOptions } from "../../types"
 
+/**
+ * Gets an actor for a given identifier and actor type.
+ *
+ * @param input - The input for the step.
+ * @param input.identifier - The identifier of the actor to get.
+ * @param input.actorType - The type of actor to get.
+ * @param input.accessorsPerActor - The accessors per actor to use for the step.
+ */
 export const getActorStep = createStep(
   "get-actor",
   async (input: {
