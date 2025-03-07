@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**"
+      - "!.changeset/**"
+      - "!package.json"
+      - "!yarn.lock"
+  workflow_dispatch:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  check-commit:
+    name: Check Commit Message
+    runs-on: ubuntu-latest
+    outputs:
+      should-release: ${{ steps.check.outputs.match }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Check commit message
+        id: check
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MSG" == *"chore: Release"* ]]; then
+            echo "match=true" >> $GITHUB_OUTPUT
+          else
+            echo "match=false" >> $GITHUB_OUTPUT
+          fi
+
+  release:
+    name: Release
+    needs: check-commit
+    if: needs.check-commit.outputs.should-release == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Setup Git User
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Create Changesets Release
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: yarn release
+          commit: 'chore(release): version packages'
+          title: 'Release: Version Packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Log Published Packages
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          echo "The following packages were published:"
+          echo '${{ steps.changesets.outputs.publishedPackages }}'
