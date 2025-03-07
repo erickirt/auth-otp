@@ -17,7 +17,7 @@
 </h4>
 
 <p align="center">
-  Implement seamlessly OTP-based authentication for Medusa 2.x
+  Implement seamlessly OTP-based authentication for Medusa 2.x 
 </p>
 
 <p align="center">
