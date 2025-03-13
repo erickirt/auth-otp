@@ -35,6 +35,22 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
       }
     }
 
+    if (!isDefined(data.body?.otp)) {
+      return {
+        success: false,
+        error: "OTP is required"
+      }
+    }
+
+    const otp = await this.cacheService_.get(`otp:pre-register:${data.body!.identifier}`)
+
+    if (otp !== data.body!.otp) {
+      return {
+        success: false,
+        error: "Invalid OTP"
+      }
+    }
+
     let authIdentity: AuthIdentityDTO | undefined
     try {
       authIdentity = await authIdentityProviderService.retrieve({

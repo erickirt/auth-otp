@@ -27,7 +27,7 @@ const verifyOtpWorkflow = createWorkflow(
       identifier: input.identifier,
       actorType: input.actorType,
       accessorsPerActor: input.accessorsPerActor,
-      foundActor: actor.data[0]
+      foundActor: actor
     })
 
     const storedOtpResult = getStoredOtpStep({

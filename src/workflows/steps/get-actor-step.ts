@@ -34,10 +34,15 @@ export const getActorStep = createStep(
       filters
     })
 
-    if (!actor.data.length) {
-      throw new MedusaError(MedusaError.Types.NOT_FOUND, `No actor found`)
+    const foundActor = actor.data.length ? actor.data[0] : null
+
+    if (!foundActor) {
+      return new StepResponse({
+        error: true,
+        actor: null
+      })
     }
 
-    return new StepResponse({ actor })
+    return new StepResponse({ actor: foundActor, error: false })
   }
 )

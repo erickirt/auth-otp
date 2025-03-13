@@ -106,7 +106,8 @@ export type OtpOptions = {
 }
 
 export enum Events {
-  OTP_GENERATED = 'otp.generated'
+  OTP_GENERATED = 'otp.generated',
+  PRE_REGISTER_OTP_GENERATED = 'pre-register.otp.generated'
 }
 
 export type OtpGeneratedEvent = {

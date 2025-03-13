@@ -4,6 +4,7 @@ import {
 } from "@medusajs/framework/http"
 import { PostAuthActorTypeOtpGenerateSchema } from "./auth/[actor_type]/otp/generate/validators"
 import { PostAuthActorTypeOtpVerifySchema } from "./auth/[actor_type]/otp/verify/validators"
+import { PostAuthActorTypeOtpPreRegisterSchema } from "./auth/[actor_type]/otp/pre-register/validators"
 
 export default defineMiddlewares({
   routes: [
@@ -19,6 +20,13 @@ export default defineMiddlewares({
       method: "POST",
       middlewares: [
         validateAndTransformBody(PostAuthActorTypeOtpVerifySchema),
+      ],
+    },
+    {
+      matcher: "/auth/:actor_type/otp/pre-register",
+      method: "POST",
+      middlewares: [
+        validateAndTransformBody(PostAuthActorTypeOtpPreRegisterSchema),
       ],
     },
   ],

@@ -12,9 +12,12 @@ export const getStoredOtpStep = createStep(
   "get-stored-otp",
   async (input: {
     key: string
+    purpose?: string
   }, { container }) => {
     const cacheService = container.resolve<ICacheService>(Modules.CACHE)
-    const storedOtp = await cacheService.get<string>(`totp:${input.key}`)
+    const key = input.purpose ? `${input.purpose}:${input.key}` : input.key
+    const cacheKey = `otp:${key}`
+    const storedOtp = await cacheService.get<string>(cacheKey)
 
     if (!storedOtp) {
       throw new Error("OTP not found")
