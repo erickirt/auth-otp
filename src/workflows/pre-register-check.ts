@@ -37,7 +37,7 @@ const preRegisterCheckWorkflow = createWorkflow(
 
     const generatedOtpResult = generateOtpStep({
       key: input.identifier,
-      purpose: 'pre-register'
+      tag: 'pre-register'
     })
 
     emitEventStep({

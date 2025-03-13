@@ -9,19 +9,20 @@ import { OtpUtils } from "../../utils/otp"
  *
  * @param input - The input for the step.
  * @param input.key - The key to generate the OTP for.
+ * @param input.tag - The tag for the cache key.
  */
 export const generateOtpStep = createStep(
   "generate-otp",
   async (input: {
     key: string,
-    purpose?: string
+    tag?: string
   }, { container }) => {
     const cacheService = container.resolve<ICacheService>(Modules.CACHE)
     const configModule = container.resolve(ContainerRegistrationKeys.CONFIG_MODULE)
     const pluginOptions = getPluginOptions(configModule)
 
     const otp = OtpUtils.generateRandomOTP(pluginOptions.digits)
-    const key = input.purpose ? `${input.purpose}:${input.key}` : input.key
+    const key = input.tag ? `${input.tag}:${input.key}` : input.key
     const cacheKey = `otp:${key}`
 
     await cacheService.set(cacheKey, otp, pluginOptions.ttl)

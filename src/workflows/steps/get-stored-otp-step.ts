@@ -7,15 +7,16 @@ import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
  *
  * @param input - The input for the step.
  * @param input.key - The key to get the OTP for.
+ * @param input.tag - The tag for the cache key.
  */
 export const getStoredOtpStep = createStep(
   "get-stored-otp",
   async (input: {
     key: string
-    purpose?: string
+    tag?: string
   }, { container }) => {
     const cacheService = container.resolve<ICacheService>(Modules.CACHE)
-    const key = input.purpose ? `${input.purpose}:${input.key}` : input.key
+    const key = input.tag ? `${input.tag}:${input.key}` : input.key
     const cacheKey = `otp:${key}`
     const storedOtp = await cacheService.get<string>(cacheKey)
 
