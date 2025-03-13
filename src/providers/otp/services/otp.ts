@@ -1,6 +1,5 @@
 import { AuthenticationInput, AuthIdentityProviderService, AuthenticationResponse, ICacheService, Logger, AuthIdentityDTO } from "@medusajs/framework/types"
 import { AbstractAuthModuleProvider, ContainerRegistrationKeys, isDefined, MedusaError, Modules } from "@medusajs/framework/utils"
-import { randomBytes } from 'node:crypto'
 
 type InjectedDependencies = {
   [Modules.CACHE]: ICacheService
