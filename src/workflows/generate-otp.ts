@@ -31,8 +31,7 @@ const generateOtpWorkflow = createWorkflow(
     })
 
     const generatedOtpResult = generateOtpStep({
-      authIdentityId: authIdentity!.id,
-      identifier: input.identifier
+      key: authIdentity!.id
     })
 
     emitEventStep({

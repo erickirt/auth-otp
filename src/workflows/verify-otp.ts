@@ -31,8 +31,7 @@ const verifyOtpWorkflow = createWorkflow(
     })
 
     const storedOtpResult = getStoredOtpStep({
-      authIdentityId: authIdentity!.id,
-      identifier: input.identifier
+      key: authIdentity!.id
     })
 
     const validateOtpResult = validateOtpStep({

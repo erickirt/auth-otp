@@ -5,24 +5,22 @@ import getPluginOptions from "../../utils/get-plugin-options"
 import { OtpUtils } from "../../utils/otp"
 
 /**
- * Generates an OTP for a given auth identity ID and identifier.
+ * Generates an OTP for a given key.
  *
  * @param input - The input for the step.
- * @param input.authIdentityId - The ID of the auth identity to generate the OTP for.
- * @param input.identifier - The identifier of the actor to generate the OTP for.
+ * @param input.key - The key to generate the OTP for.
  */
 export const generateOtpStep = createStep(
   "generate-otp",
   async (input: {
-    authIdentityId: string
-    identifier: string
+    key: string
   }, { container }) => {
     const cacheService = container.resolve<ICacheService>(Modules.CACHE)
     const configModule = container.resolve(ContainerRegistrationKeys.CONFIG_MODULE)
     const pluginOptions = getPluginOptions(configModule)
 
     const otp = OtpUtils.generateRandomOTP(pluginOptions.digits)
-    const cacheKey = `totp:${input.authIdentityId}`
+    const cacheKey = `totp:${input.key}`
 
     await cacheService.set(cacheKey, otp, pluginOptions.ttl)
 
