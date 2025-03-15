@@ -7,6 +7,8 @@ type InjectedDependencies = {
 }
 
 export const OTP_RETURN_KEY = "otp_generated"
+// Special key used to store recently registered identifiers for direct authentication
+export const RECENTLY_REGISTERED_KEY = "recently_registered"
 
 export class OtpAuthProviderService extends AbstractAuthModuleProvider {
   static identifier = "otp"
@@ -20,8 +22,78 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
     this.logger_ = container[ContainerRegistrationKeys.LOGGER]
   }
 
-  async authenticate(): Promise<AuthenticationResponse> {
-    throw new Error("To authenticate with OTP provider, you need to use the `verify` and `generate` API routes.")
+  async authenticate(
+    data: AuthenticationInput,
+    authIdentityProviderService: AuthIdentityProviderService
+  ): Promise<AuthenticationResponse> {
+    if (!isDefined(data.body?.identifier)) {
+      return {
+        success: false,
+        error: "Identifier is required"
+      }
+    }
+
+    const identifier = data.body!.identifier
+
+    try {
+      // Check if this is a recently registered user (within the TTL window)
+      const isRecentlyRegistered = await this.cacheService_.get(`${RECENTLY_REGISTERED_KEY}:${identifier}:${data.body!.otp}`)
+
+      if (isRecentlyRegistered === "true") {
+        // If recently registered, allow direct authentication without OTP
+        try {
+          const authIdentity = await authIdentityProviderService.retrieve({
+            entity_id: identifier,
+          })
+
+          await this.cacheService_.invalidate(`${RECENTLY_REGISTERED_KEY}:${identifier}`)
+
+          return {
+            success: true,
+            authIdentity
+          }
+        } catch (error) {
+          return {
+            success: false,
+            error: "Authentication failed"
+          }
+        }
+      }
+
+      // If not recently registered and no OTP provided, we need to generate a new OTP
+      if (!isDefined(data.body?.otp)) {
+        return {
+          success: false,
+          error: "OTP is required for authentication"
+        }
+      }
+
+      // Verify the OTP
+      const otp = await this.cacheService_.get(`otp:${identifier}`)
+
+      if (otp !== data.body!.otp) {
+        return {
+          success: false,
+          error: "Invalid OTP"
+        }
+      }
+
+      // OTP is valid, retrieve the auth identity
+      const authIdentity = await authIdentityProviderService.retrieve({
+        entity_id: identifier,
+      })
+
+      return {
+        success: true,
+        authIdentity
+      }
+    } catch (error) {
+      this.logger_.error(error)
+      return {
+        success: false,
+        error: "Authentication failed"
+      }
+    }
   }
 
   async register(
@@ -73,6 +145,10 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
         error: "Failed to create identity"
       }
     }
+
+    const REGISTER_TTL = 60 // seconds
+    // Mark this identifier as recently registered to allow direct one time authentication
+    await this.cacheService_.set(`${RECENTLY_REGISTERED_KEY}:${data.body!.identifier}:${otp}`, "true", REGISTER_TTL)
 
     return {
       success: true,
