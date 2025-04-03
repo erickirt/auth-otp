@@ -1,20 +1,21 @@
-1. License Grant
-You are granted a non-exclusive, non-transferable license to use this software for personal or commercial purposes, on unlimited projects.
+MIT License
 
-2. Restrictions
-You may not:
-a) Resell, sublicense, or distribute this software to any third party.
-b) Reverse engineer, decompile, or disassemble the software for the purpose of creating derivative works intended for sale or free distribution.
-c) Share the software publicly, including making it available for free or as part of an open-source project.
+Copyright (c) 2025 perseides / Adil BASRI (adevinwild)
 
-3. Ownership
-The software remains the intellectual property of the author. This license does not transfer ownership.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-4. Disclaimer
-The software is provided "as is" without any warranties, express or implied.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
---- 
-
-Adil BASRI
-2025
-adil@perseidesjs.com
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
