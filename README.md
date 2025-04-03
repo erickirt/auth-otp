@@ -1,9 +1,9 @@
 <p align="center">
   <a href="https://www.github.com/perseidesjs">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./.github/dark_mode.png" width="128" height="128">
-    <source media="(prefers-color-scheme: light)" srcset="./.github/light_mode.png" width="128" height="128">
-    <img alt="Perseides logo" src="./.github/light_mode.png">
+    <source media="(prefers-color-scheme: dark)" srcset="./.github/assets/dark_mode.png" width="128" height="128">
+    <source media="(prefers-color-scheme: light)" srcset="./.github/assets/light_mode.png" width="128" height="128">
+    <img alt="Perseides logo" src="./.github/assets/light_mode.png">
     </picture>
   </a>
 </p>
@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <img src="./.github/preview.gif" alt="Preview of @perseidesjs/auth-otp in action">
+  <img src="./.github/assets/preview.gif" alt="Preview of @perseidesjs/auth-otp in action">
 </p>
 
 
