@@ -1,3 +1,5 @@
+name: Notify Discord of GitHub Release
+
 on:
   release:
     types: [published]
