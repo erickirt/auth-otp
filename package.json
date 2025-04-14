@@ -9,6 +9,10 @@
     ".github/assets",
     "CHANGELOG.md"
   ],
+  "keywords": [
+    "medusa-plugin-auth",
+    "medusa-v2"
+  ],
   "license": "SEE LICENSE IN LICENSE.md",
   "exports": {
     "./package.json": "./package.json",
