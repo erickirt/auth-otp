@@ -27,11 +27,11 @@ jobs:
           EOF
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Install a specific Yarn version
+        run: corepack prepare yarn@4.6.0 --activate
 
       - name: Install Dependencies
-        run: yarn
+        run: yarn install
 
       - name: Build packages
         run: yarn build
