@@ -28,8 +28,8 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install a specific Yarn version
-        run: corepack prepare yarn@4.6.0 --activate
-
+        run: corepack enable
+        
       - name: Install Dependencies
         run: yarn install
 
