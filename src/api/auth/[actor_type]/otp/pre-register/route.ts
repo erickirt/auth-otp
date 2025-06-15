@@ -2,11 +2,10 @@ import {
   MedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { type PostAuthActorTypeOtpPreRegisterSchema } from "./validators"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import getPluginOptions from "../../../../../utils/get-plugin-options"
-import generateOtpWorkflow from "../../../../../workflows/generate-otp"
 import preRegisterCheckWorkflow from "../../../../../workflows/pre-register-check"
+import { type PostAuthActorTypeOtpPreRegisterSchema } from "./validators"
 
 export const POST = async (
   req: MedusaRequest<PostAuthActorTypeOtpPreRegisterSchema>,
