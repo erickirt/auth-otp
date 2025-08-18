@@ -4229,13 +4229,13 @@ __metadata:
     vite: "npm:^5.2.11"
     yalc: "npm:^1.0.0-pre.53"
   peerDependencies:
-    "@medusajs/admin-sdk": 2.8.4
-    "@medusajs/cli": 2.8.4
-    "@medusajs/framework": 2.8.4
-    "@medusajs/icons": 2.8.4
-    "@medusajs/medusa": 2.8.4
-    "@medusajs/test-utils": 2.8.4
-    "@medusajs/ui": 4.0.14
+    "@medusajs/admin-sdk": ">=2.8.4"
+    "@medusajs/cli": ">2.8.4"
+    "@medusajs/framework": ">2.8.4"
+    "@medusajs/icons": ">2.8.4"
+    "@medusajs/medusa": ">2.8.4"
+    "@medusajs/test-utils": ">2.8.4"
+    "@medusajs/ui": ">4.0.14"
   languageName: unknown
   linkType: soft
 
