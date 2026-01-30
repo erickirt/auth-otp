@@ -45,7 +45,7 @@ pnpm add @perseidesjs/auth-otp
 
 ## Documentation
 
-Access the full documentation at [docs.perseides.org/plugins/auth-otp](https://docs.perseides.org/plugins/auth-otp/getting-started)
+Access the full documentation at [https://docs.perseides.org/docs/plugins/auth-otp/getting-started](https://docs.perseides.org/docs/plugins/auth-otp/getting-started)
 
 ## License
 
