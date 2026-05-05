@@ -277,6 +277,31 @@ medusaIntegrationTestRunner({
 					await authModuleService.deleteAuthIdentities([authIdentity.id])
 				})
 
+				// H3 — unknown actor type returns 400, not a crash
+				it("H3: unknown actor type returns 400", async () => {
+					const gen = await api
+						.post("/auth/unknownactor/otp/generate", {
+							identifier: "a@b.com",
+						})
+						.catch((e) => e.response)
+					expect(gen.status).toEqual(400)
+
+					const ver = await api
+						.post("/auth/unknownactor/otp/verify", {
+							identifier: "a@b.com",
+							otp: "123456",
+						})
+						.catch((e) => e.response)
+					expect(ver.status).toEqual(400)
+
+					const pre = await api
+						.post("/auth/unknownactor/otp/pre-register", {
+							identifier: "a@b.com",
+						})
+						.catch((e) => e.response)
+					expect(pre.status).toEqual(400)
+				})
+
 				// C1 — actor not found does not leak auth identities via MikroORM undefined filter
 				it("C1: ghost identifier returns generic success, no data leaked", async () => {
 					const beforeCount = (await authModuleService.listAuthIdentities())

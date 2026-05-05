@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils"
 import { Events } from "../../../../../types"
 import getPluginOptions from "../../../../../utils/get-plugin-options"
 import generateOtpWorkflow from "../../../../../workflows/generate-otp"
@@ -20,6 +20,14 @@ export const POST = async (
 	const pluginOptions = getPluginOptions(configModule)
 
 	const accessorsPerActor = pluginOptions.accessorsPerActor?.[actorType]
+
+	if (!accessorsPerActor) {
+		throw new MedusaError(
+			MedusaError.Types.INVALID_DATA,
+			`Actor type "${actorType}" is not configured`,
+		)
+	}
+
 	const eventOptions = pluginOptions.events?.[Events.OTP_GENERATED]
 
 	await generateOtpWorkflow(req.scope)
