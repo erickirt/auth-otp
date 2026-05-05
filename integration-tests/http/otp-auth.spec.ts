@@ -355,6 +355,28 @@ medusaIntegrationTestRunner({
 					expect(second.status).not.toEqual(200)
 				})
 
+				// M3 — OTP generation produces numeric-only string of correct length
+				it("M3: generated OTP is numeric and matches configured digit count", async () => {
+					const { customer, authIdentity } = await createCustomerWithAuth(
+						"m3-otp-format@example.com",
+						"M3",
+						"Test",
+					)
+
+					await api.post("/auth/customer/otp/generate", {
+						identifier: customer.email,
+					})
+
+					const otp = await cacheService.get(`otp:${authIdentity.id}`) as string
+					expect(otp).toBeDefined()
+					expect(otp).toMatch(/^\d{6}$/)
+					expect(Number(otp)).toBeGreaterThanOrEqual(0)
+					expect(Number(otp)).toBeLessThan(1_000_000)
+
+					await customerModuleService.deleteCustomers(customer.id)
+					await authModuleService.deleteAuthIdentities([authIdentity.id])
+				})
+
 				// C1 — actor not found does not leak auth identities via MikroORM undefined filter
 				it("C1: ghost identifier returns generic success, no data leaked", async () => {
 					const beforeCount = (await authModuleService.listAuthIdentities())
