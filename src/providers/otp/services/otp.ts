@@ -87,7 +87,7 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 			}
 
 			// Verify the OTP
-			const otp = await this.cacheService_.get(`otp:${identifier}`)
+			const otp = await this.cacheService_.get<string>(`otp:${identifier}`)
 			const inputOtp = data.body?.otp ?? ""
 
 			if (!otp) {
