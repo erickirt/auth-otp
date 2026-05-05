@@ -302,6 +302,36 @@ medusaIntegrationTestRunner({
 					expect(pre.status).toEqual(400)
 				})
 
+				// C2 — OTP is single-use after successful verify
+				it("C2: OTP cannot be reused after successful verify", async () => {
+					const { customer, authIdentity } = await createCustomerWithAuth(
+						"c2-single-use@example.com",
+						"C2",
+						"Test",
+					)
+
+					const testOtp = "555555"
+					await cacheService.set(`otp:${authIdentity.id}`, testOtp, 300)
+
+					const first = await api.post("/auth/customer/otp/verify", {
+						identifier: customer.email,
+						otp: testOtp,
+					})
+					expect(first.status).toEqual(200)
+					expect(first.data).toHaveProperty("token")
+
+					const second = await api
+						.post("/auth/customer/otp/verify", {
+							identifier: customer.email,
+							otp: testOtp,
+						})
+						.catch((e) => e.response)
+					expect(second.status).toEqual(400)
+
+					await customerModuleService.deleteCustomers(customer.id)
+					await authModuleService.deleteAuthIdentities([authIdentity.id])
+				})
+
 				// C1 — actor not found does not leak auth identities via MikroORM undefined filter
 				it("C1: ghost identifier returns generic success, no data leaked", async () => {
 					const beforeCount = (await authModuleService.listAuthIdentities())

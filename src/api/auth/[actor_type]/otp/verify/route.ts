@@ -40,23 +40,17 @@ export const POST = async (
 			},
 		})
 
-		if (result.isValid) {
-			const { http } = configModule.projectConfig
-			const token = await generateJwtTokenForAuthIdentity(
-				{ authIdentity: result.authIdentity!, actorType },
-				{
-					secret: http.jwtSecret,
-					expiresIn: http.jwtExpiresIn,
-					options: http.jwtOptions,
-				},
-			)
+		const { http } = configModule.projectConfig
+		const token = await generateJwtTokenForAuthIdentity(
+			{ authIdentity: result.authIdentity!, actorType },
+			{
+				secret: http.jwtSecret,
+				expiresIn: http.jwtExpiresIn,
+				options: http.jwtOptions,
+			},
+		)
 
-			res.send({
-				token,
-			})
-		} else {
-			throw new MedusaError(MedusaError.Types.INVALID_DATA, `Invalid OTP`)
-		}
+		res.send({ token })
 	} catch (error) {
 		if (pluginOptions.http?.alwaysReturnSuccess) {
 			if (pluginOptions.http.warnOnError) {
