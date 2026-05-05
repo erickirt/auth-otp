@@ -246,6 +246,25 @@ medusaIntegrationTestRunner({
 					await authModuleService.deleteAuthIdentities([authIdentity.id])
 				})
 			})
+
+			describe("Security", () => {
+				// C1 — actor not found does not leak auth identities via MikroORM undefined filter
+				it("C1: ghost identifier returns generic success, no data leaked", async () => {
+					const beforeCount = (await authModuleService.listAuthIdentities())
+						.length
+
+					const response = await api.post("/auth/customer/otp/generate", {
+						identifier: "ghost-nobody@example.com",
+					})
+
+					expect(response.status).toEqual(200)
+					expect(response.data).toHaveProperty("message")
+
+					const afterCount = (await authModuleService.listAuthIdentities())
+						.length
+					expect(afterCount).toEqual(beforeCount)
+				})
+			})
 		})
 	},
 })

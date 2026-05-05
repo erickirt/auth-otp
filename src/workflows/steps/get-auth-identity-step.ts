@@ -1,4 +1,4 @@
-import { Modules } from "@medusajs/framework/utils"
+import { MedusaError, Modules } from "@medusajs/framework/utils"
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 import type { OtpOptions } from "../../types"
 import { isDefined } from "../../utils/is-defined"
@@ -29,6 +29,13 @@ export const getAuthIdentityStep = createStep(
 		const entityId = entityIdAccessor
 			? (input.foundActor?.[entityIdAccessor] as string)
 			: undefined
+
+		if (!entityId) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_FOUND,
+				"Auth identity not found",
+			)
+		}
 
 		const authIdentities = await authModule.listAuthIdentities(
 			{
