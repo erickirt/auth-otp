@@ -63,7 +63,7 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 					})
 
 					await this.cacheService_.invalidate(
-						`${RECENTLY_REGISTERED_KEY}:${identifier}`,
+						`${RECENTLY_REGISTERED_KEY}:${identifier}:${data.body?.otp}`,
 					)
 
 					return {

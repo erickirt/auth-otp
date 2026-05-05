@@ -355,6 +355,45 @@ medusaIntegrationTestRunner({
 					expect(second.status).not.toEqual(200)
 				})
 
+				// C3 — recently_registered bypass is single-use (invalidation key was wrong before)
+				it("C3: recently_registered bypass is consumed after first authenticate", async () => {
+					const identifier = "c3-recent-reg@example.com"
+					const otp = "777777"
+
+					const authIdentity = await authModuleService.createAuthIdentities({
+						provider_identities: [{ provider: "otp", entity_id: identifier }],
+						app_metadata: {},
+					})
+
+					// Simulate what register() does: set the recently_registered cache key
+					await cacheService.set(
+						`recently_registered:${identifier}:${otp}`,
+						"true",
+						60,
+					)
+
+					// First authenticate via Medusa standard path — should succeed via bypass
+					const first = await api.post(`/auth/customer/otp`, {
+						identifier,
+						otp,
+					})
+					expect(first.status).toEqual(200)
+
+					// Key must be gone after first use
+					const gone = await cacheService.get(
+						`recently_registered:${identifier}:${otp}`,
+					)
+					expect(gone).toBeNull()
+
+					// Second attempt — bypass consumed, falls through to OTP check which also fails
+					const second = await api
+						.post(`/auth/customer/otp`, { identifier, otp })
+						.catch((e) => e.response)
+					expect(second.status).not.toEqual(200)
+
+					await authModuleService.deleteAuthIdentities([authIdentity.id])
+				})
+
 				// H4 — timing-safe OTP comparison: correct, wrong same length, wrong different length
 				it("H4: OTP comparison rejects wrong and different-length OTPs", async () => {
 					const { customer, authIdentity } = await createCustomerWithAuth(
