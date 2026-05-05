@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto"
 import type {
 	AuthenticationInput,
 	AuthenticationResponse,
@@ -87,8 +88,16 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 
 			// Verify the OTP
 			const otp = await this.cacheService_.get(`otp:${identifier}`)
+			const inputOtp = data.body?.otp ?? ""
 
-			if (otp !== data.body?.otp) {
+			if (!otp) {
+				return { success: false, error: "Invalid OTP" }
+			}
+
+			const a = Buffer.from(otp)
+			const b = Buffer.from(inputOtp)
+
+			if (a.length !== b.length || !timingSafeEqual(a, b)) {
 				return {
 					success: false,
 					error: "Invalid OTP",

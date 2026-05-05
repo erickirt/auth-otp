@@ -355,6 +355,58 @@ medusaIntegrationTestRunner({
 					expect(second.status).not.toEqual(200)
 				})
 
+				// H4 — timing-safe OTP comparison: correct, wrong same length, wrong different length
+				it("H4: OTP comparison rejects wrong and different-length OTPs", async () => {
+					const { customer, authIdentity } = await createCustomerWithAuth(
+						"h4-timingsafe@example.com",
+						"H4",
+						"Test",
+					)
+
+					const correctOtp = "123456"
+
+					// correct OTP succeeds
+					await cacheService.set(`otp:${authIdentity.id}`, correctOtp, 300)
+					const valid = await api.post("/auth/customer/otp/verify", {
+						identifier: customer.email,
+						otp: correctOtp,
+					})
+					expect(valid.status).toEqual(200)
+
+					// wrong OTP same length fails
+					await cacheService.set(`otp:${authIdentity.id}`, correctOtp, 300)
+					const wrongSameLen = await api
+						.post("/auth/customer/otp/verify", {
+							identifier: customer.email,
+							otp: "999999",
+						})
+						.catch((e) => e.response)
+					expect(wrongSameLen.status).toEqual(400)
+
+					// OTP shorter than stored fails
+					await cacheService.set(`otp:${authIdentity.id}`, correctOtp, 300)
+					const tooShort = await api
+						.post("/auth/customer/otp/verify", {
+							identifier: customer.email,
+							otp: "12345",
+						})
+						.catch((e) => e.response)
+					expect(tooShort.status).toEqual(400)
+
+					// OTP longer than stored fails
+					await cacheService.set(`otp:${authIdentity.id}`, correctOtp, 300)
+					const tooLong = await api
+						.post("/auth/customer/otp/verify", {
+							identifier: customer.email,
+							otp: "1234567",
+						})
+						.catch((e) => e.response)
+					expect(tooLong.status).toEqual(400)
+
+					await customerModuleService.deleteCustomers(customer.id)
+					await authModuleService.deleteAuthIdentities([authIdentity.id])
+				})
+
 				// M3 — OTP generation produces numeric-only string of correct length
 				it("M3: generated OTP is numeric and matches configured digit count", async () => {
 					const { customer, authIdentity } = await createCustomerWithAuth(

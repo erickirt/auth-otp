@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto"
 import { MedusaError } from "@medusajs/framework/utils"
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk"
 
@@ -8,7 +9,10 @@ export const validateOtpStep = createStep(
 			throw new MedusaError(MedusaError.Types.NOT_FOUND, "OTP not found")
 		}
 
-		if (input.storedOtp !== input.otp) {
+		const a = Buffer.from(input.storedOtp)
+		const b = Buffer.from(input.otp)
+
+		if (a.length !== b.length || !timingSafeEqual(a, b)) {
 			throw new MedusaError(MedusaError.Types.INVALID_DATA, "Invalid OTP")
 		}
 
