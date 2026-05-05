@@ -332,6 +332,29 @@ medusaIntegrationTestRunner({
 					await authModuleService.deleteAuthIdentities([authIdentity.id])
 				})
 
+				// H1 — pre-register OTP is single-use after register
+				it("H1: pre-register OTP cannot be reused after register", async () => {
+					const identifier = "h1-preregsingle@example.com"
+
+					await api.post("/auth/customer/otp/pre-register", { identifier })
+					const otp = await cacheService.get(
+						`otp:pre-register:${identifier}`,
+					)
+					expect(otp).toBeDefined()
+
+					await api.post("/auth/customer/otp/register", { identifier, otp })
+
+					const consumed = await cacheService.get(
+						`otp:pre-register:${identifier}`,
+					)
+					expect(consumed).toBeNull()
+
+					const second = await api
+						.post("/auth/customer/otp/register", { identifier, otp })
+						.catch((e) => e.response)
+					expect(second.status).not.toEqual(200)
+				})
+
 				// C1 — actor not found does not leak auth identities via MikroORM undefined filter
 				it("C1: ghost identifier returns generic success, no data leaked", async () => {
 					const beforeCount = (await authModuleService.listAuthIdentities())

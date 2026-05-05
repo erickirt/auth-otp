@@ -131,9 +131,9 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 			}
 		}
 
-		const otp = await this.cacheService_.get(
-			`otp:pre-register:${data.body?.identifier}`,
-		)
+		const identifier = data.body?.identifier?.toLowerCase().trim()
+
+		const otp = await this.cacheService_.get(`otp:pre-register:${identifier}`)
 
 		if (otp !== data.body?.otp) {
 			return {
@@ -142,10 +142,13 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 			}
 		}
 
+		// Consume the pre-register OTP immediately — single use
+		await this.cacheService_.invalidate(`otp:pre-register:${identifier}`)
+
 		let authIdentity: AuthIdentityDTO | undefined
 		try {
 			authIdentity = await authIdentityProviderService.retrieve({
-				entity_id: data.body?.identifier,
+				entity_id: identifier,
 			})
 		} catch (error: unknown) {
 			if (!(error instanceof MedusaError))
@@ -154,9 +157,8 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 			if (error.type !== MedusaError.Types.NOT_FOUND)
 				return { success: false, error: error.message }
 
-			// If the identity is not found, we create it
 			authIdentity = await authIdentityProviderService.create({
-				entity_id: data.body?.identifier,
+				entity_id: identifier,
 			})
 		}
 
@@ -168,9 +170,8 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 		}
 
 		const REGISTER_TTL = 60 // seconds
-		// Mark this identifier as recently registered to allow direct one time authentication
 		await this.cacheService_.set(
-			`${RECENTLY_REGISTERED_KEY}:${data.body?.identifier}:${otp}`,
+			`${RECENTLY_REGISTERED_KEY}:${identifier}:${otp}`,
 			"true",
 			REGISTER_TTL,
 		)
