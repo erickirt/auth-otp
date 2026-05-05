@@ -46,7 +46,7 @@ export class OtpAuthProviderService extends AbstractAuthModuleProvider {
 			}
 		}
 
-		const identifier = data.body?.identifier
+		const identifier = data.body?.identifier?.toLowerCase().trim()
 
 		try {
 			// Check if this is a recently registered user (within the TTL window)

@@ -248,6 +248,35 @@ medusaIntegrationTestRunner({
 			})
 
 			describe("Security", () => {
+				// H2 — identifier is case-insensitive end-to-end
+				it("H2: generate with uppercase email, verify with lowercase succeeds", async () => {
+					const lowerEmail = "h2-casetest@example.com"
+					const { customer, authIdentity } = await createCustomerWithAuth(
+						lowerEmail,
+						"H2",
+						"Test",
+					)
+
+					const generateResponse = await api.post(
+						"/auth/customer/otp/generate",
+						{ identifier: lowerEmail.toUpperCase() },
+					)
+					expect(generateResponse.status).toEqual(200)
+
+					const otp = await cacheService.get(`otp:${authIdentity.id}`)
+					expect(otp).toBeDefined()
+
+					const verifyResponse = await api.post("/auth/customer/otp/verify", {
+						identifier: lowerEmail,
+						otp: otp as string,
+					})
+					expect(verifyResponse.status).toEqual(200)
+					expect(verifyResponse.data).toHaveProperty("token")
+
+					await customerModuleService.deleteCustomers(customer.id)
+					await authModuleService.deleteAuthIdentities([authIdentity.id])
+				})
+
 				// C1 — actor not found does not leak auth identities via MikroORM undefined filter
 				it("C1: ghost identifier returns generic success, no data leaked", async () => {
 					const beforeCount = (await authModuleService.listAuthIdentities())
