@@ -29,9 +29,7 @@
   Implement seamlessly OTP-based authentication for Medusa 2.x
 </p>
 
-<p align="center">
-  <img src="./.github/assets/preview.gif" alt="Preview of @perseidesjs/auth-otp in action">
-</p>
+https://github.com/user-attachments/assets/c242ba6f-a6c6-4e55-ab8d-cd7aa0d1f4e3
 
 ## Installation
 
